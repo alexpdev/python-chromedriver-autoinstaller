@@ -4,7 +4,7 @@ Download [chromedriver](https://chromedriver.chromium.org/) for the currently in
 ## Installation
 
 ```bash
-pip install pychromedriver
+
 ```
 
 ## Usage
