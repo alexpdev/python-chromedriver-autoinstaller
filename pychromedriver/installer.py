@@ -12,14 +12,10 @@ import zipfile
 from typing import AnyStr, Optional
 from io import BytesIO
 
-
-
 class ChromeInstaller:
-
     def __init__(self, cwd=False, ssl=True):
         self.cwd = cwd
         self.ssl = ssl
-
     def install(self):
         if self.cwd:
             path = Path(".")
@@ -30,16 +26,13 @@ class ChromeInstaller:
         elif chromedriver_dir not in os.environ["PATH"]:
             os.environ["PATH"] = chromedriver_dir + self.separator + os.environ["PATH"]
         return chromedriver_filepath
-
     @property
     def filename(self):
         fname = "chromedriver"
         return fname + ".exe" if sys.platform.startswith("win") else fname
-
     @property
     def separator(self):
         return ";" if sys.platform.startswith("win") else ":"
-
     def get_platform_architecture(self):
         if sys.platform.startswith("linux") and sys.maxsize > 2**32:
             platform = "linux"
@@ -55,8 +48,6 @@ class ChromeInstaller:
                 "Could not determine chromedriver download URL for this platform."
             )
         return platform, architecture
-
-
     def get_chromedriver_url(self, version):
         if self.ssl:
             base_url = "https://chromedriver.storage.googleapis.com/"
@@ -64,7 +55,6 @@ class ChromeInstaller:
             base_url = "http://chromedriver.storage.googleapis.com/"
         platform, architecture = self.get_platform_architecture()
         return base_url + version + "/chromedriver_" + platform + architecture + ".zip"
-
     def find_binary_in_path(self, filename):
         if "PATH" not in os.environ:
             return None
@@ -73,7 +63,6 @@ class ChromeInstaller:
             if os.path.isfile(binary) and os.access(binary, os.X_OK):
                 return binary
         return None
-
     def check_version(self, binary, required_version):
         try:
             version = subprocess.check_output([binary, "-v"])
@@ -83,12 +72,7 @@ class ChromeInstaller:
         except Exception:
             return False
         return False
-
-
     def get_chrome_version(self):
-        """
-        :return: the version of chrome installed on client
-        """
         platform, _ = self.get_platform_architecture()
         if platform == "linux":
             path = self.get_linux_executable_path()
@@ -145,16 +129,7 @@ class ChromeInstaller:
         else:
             return
         return version
-
-
     def get_linux_executable_path():
-        """
-        Look through a list of candidates for Google Chrome executables that might
-        exist, and return the full path to first one that does. Raise a ValueError
-        if none do.
-
-        :return: the full path to a Chrome executable on the system
-        """
         for executable in (
             "google-chrome",
             "google-chrome-stable",
@@ -167,12 +142,8 @@ class ChromeInstaller:
             if path is not None:
                 return path
         raise ValueError("No chrome executable found on PATH")
-
-
     def get_major_version(version):
         return version.split(".")[0]
-
-
     def get_matched_chromedriver_version(self, version):
         if self.ssl:
             doc = urllib.request.urlopen(
@@ -187,14 +158,10 @@ class ChromeInstaller:
             if k.text.find(self.get_major_version(version) + ".") == 0:
                 return k.text.split("/")[0]
         return
-
     def get_chromedriver_path(self):
         return os.path.abspath(os.path.dirname(__file__))
-
     def print_chromedriver_path(self):
         print(self.get_chromedriver_path())
-
-
     def download_chromedriver(self, path: Optional[AnyStr] = None):
         chrome_version = self.get_chrome_version()
         if not chrome_version:
